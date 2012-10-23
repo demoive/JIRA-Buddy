@@ -5,12 +5,18 @@
 		<style>
 			body { width: 125px; }
 			#search-input { width: 85px; }
+			#banners { font-size: 9.5px; font-family: Arial; }
 		</style>
 	</head>
 	<body>
-		<form id="search-form">
-			<input type="search" id="search-input"><input type="submit" value="Go" id="search-submit">
-		</form>
+		<div id="default-popup">
+			<form id="search-form">
+				<input type="search" id="search-input"><input type="submit" value="Go" id="search-submit">
+			</form>
+			<div id="banners">
+				Set Banners: <a href="#">red</a> | <a href="#">green</a>
+			</div>
+		</div>
 
 		<script src="jquery-1.8.2.min.js"></script>
 		<!--<script src="jquery-ui-1.8.21.min.js"></script>-->

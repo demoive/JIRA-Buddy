@@ -17,7 +17,7 @@
 			requestedIssue;
 
 		if (!JIRA_ACCOUNT_ID || !JIRA_PROJECT_PREFIX) {
-			$searchForm.html('<a href="options.html" target="_blank">Settings</a>');
+			$('#default-popup').html('<a href="options.html" target="_blank">Settings</a>');
 
 			return;
 		}
@@ -96,6 +96,8 @@ Background:
 - check every minute for issues assigned to me
 - ! if can't check
 
-User script
-- inject thing into jira pages
+Ideas:
+- Goto Bug (for JIRA): https://chrome.google.com/webstore/detail/goto-bug-for-jira/ocjecccldncbghkfbplmopcgafnfffoc/
+- JIRA Notifier: https://chrome.google.com/webstore/detail/jira-notifier/gmpioihmcpcbfboffahfekpcmooddonb/
+- JIRA assistant for Google Chrome: https://chrome.google.com/webstore/detail/jira-assistant-for-google/afpofdeegmmclngjmadpjaajacebkege/
 */
