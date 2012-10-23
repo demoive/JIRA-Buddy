@@ -14,6 +14,11 @@
 
   "options_page": "options.html",
 
+  "background": {
+    "scripts": ["eventPage.js"]
+//    "persistent": false
+  },
+
   "content_scripts": [
     {
       "matches": ["http://*.atlassian.net/*", "https://*.atlassian.net/*"],
@@ -26,6 +31,7 @@
   ],
 
   "permissions": [
-    "tabs"
+    "tabs",
+    "https://*.atlassian.net/rest/api/2/"
   ]
 }

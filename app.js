@@ -88,15 +88,22 @@
 
 /*
 Popup:
-- goto form
 - recent searches
 - set banners
+- shortcuts for JIRA backup: https://waytostay.atlassian.net/plugins/servlet/ondemandbackupmanager/admin
+- shortcuts for WIKI backup> https://waytostay.atlassian.net/wiki/plugins/servlet/ondemandbackupmanager/admin
+- link to Webdav: https://waytostay.atlassian.net/webdav/
 
 Background:
-- check every minute for issues assigned to me
-- ! if can't check
+- get the alarms working and convert to an Event Page!
+- ! if can't reach server
+- define/save JQL to search for on interval (definable interval?)
 
 Ideas:
+- If 1 issue assigned to me, prefil it in the quick-goto
+- Code Monkey and customizable injection script as an option
+- Default sounds? Enable/disable them?
+
 - Goto Bug (for JIRA): https://chrome.google.com/webstore/detail/goto-bug-for-jira/ocjecccldncbghkfbplmopcgafnfffoc/
 - JIRA Notifier: https://chrome.google.com/webstore/detail/jira-notifier/gmpioihmcpcbfboffahfekpcmooddonb/
 - JIRA assistant for Google Chrome: https://chrome.google.com/webstore/detail/jira-assistant-for-google/afpofdeegmmclngjmadpjaajacebkege/
