@@ -1,0 +1,14 @@
+{
+  "extensionDescription": {
+    "message": "Quickly go to a JIRA issue by either bringing focus to an already open tab or opening a new one.",
+    "description": "This is the plain-text description that shows up summarizing what the extension does. It can't be longer than 132 characters."
+  },
+  "browserActionTitle": {
+  	"message": "Open or quickly 'go to' any JIRA issue",
+  	"description": "Shown as the title of the button which, when clicked, shows the input field."
+  },
+  "submitButtonLabel": {
+    "message": "Go",
+    "description": "The label of the submit button"
+  }
+}
