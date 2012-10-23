@@ -10,5 +10,9 @@
   "submitButtonLabel": {
     "message": "Go",
     "description": "The label of the submit button"
+  },
+  "optionsSaveButtonLabel": {
+    "message": "Save",
+    "description": "The label of the submit button for saving options"
   }
 }

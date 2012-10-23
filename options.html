@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+	<head>
+		<title>JIRA Buddy - Options</title>
+		<style>
+			body { width: 125px; }
+			#search-input { width: 85px; }
+		</style>
+	</head>
+	<body>
+		<form id="options-form">
+			<label for="">JIRA Account ID:</label> <input type="text" id="jira-account-id"><br />
+			<label for="">JIRA Project Prefix:</label> <input type="text" id="jira-project-prefix"><br />
+
+			<!--
+			<label for="">Red:</label>
+			<textarea id="banner-red">
+{panel:title=TRUNK | borderStyle=solid | borderWidth=2 | borderColor=#dd3030 | bgColor=#f2cccc}
+			</textarea>
+
+			<label for="">Blue:</label>
+			<textarea id="banner-blue">
+{panel:title=TRUNK | borderStyle=solid | borderWidth=2 | borderColor=#3572c5 | bgColor=#d4e8f9}
+			</textarea>
+			
+			<label for="">Yellow:</label>
+			<textarea id="banner-yellow">
+{panel: borderStyle=solid | borderWidth=2 | borderColor=#fcd449 | bgColor=#fff9d6}
+*[v1.2.0|https://waytostay.atlassian.net/secure/IssueNavigator.jspa?reset=true&jqlQuery=fixVersion+%3D+%221.2.0%22+ORDER+BY+status%2C+priority+DESC]* has been deployed to *STAGE*
+QA should now be performed on *.cc* with _all_ issues (starting with "Resolved")
+
+Developers should begin/continue working on items in *[v1.2.1|https://waytostay.atlassian.net/secure/IssueNavigator.jspa?reset=true&jqlQuery=fixVersion+%3D+%221.2.1%22+ORDER+BY+status%2C+priority+DESC]*
+{panel}
+			</textarea>
+			
+			<label for="">Green:</label>
+			<textarea id="banner-green">
+{panel: borderStyle=solid | borderWidth=2 | borderColor=#69a936 | bgColor=#d5f0ce}
+*[v1.2.0|https://waytostay.atlassian.net/secure/IssueNavigator.jspa?reset=true&jqlQuery=fixVersion+%3D+%221.2.1%22+ORDER+BY+status%2C+priority+DESC]* has been deployed to *PROD*
+{panel}
+			</textarea>
+			
+			<label for="">Purple:</label>
+			<textarea id="banner-purple">
+{panel: borderStyle=solid | borderWidth=2 | borderColor=#9a49df | bgColor=#e9def9} 
+*[v1.2.1|https://waytostay.atlassian.net/secure/IssueNavigator.jspa?reset=true&jqlQuery=fixVersion+%3D+%221.2.1%22+ORDER+BY+status%2C+priority+DESC]* *STAGE* deployment scheduled today!
+Cut off for current sprint is at *17:00* (GMT+1)
+{panel}
+			</textarea>
+			-->
+			
+			<input type="submit" value="Save" id="options-save">
+		</form>
+
+		<script src="jquery-1.8.2.min.js"></script>
+        <script src="options.js"></script>
+	</body>
+</html>
