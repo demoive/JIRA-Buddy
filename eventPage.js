@@ -22,13 +22,18 @@
 			if (xhr.readyState == 4) {
 				var resp = JSON.parse(xhr.responseText);
 
-				chrome.browserAction.setBadgeText({text: (resp.total + '')});
-				//chrome.browserAction.setBadgeBackgroundColor({color: '#f15a22'});
+				if (resp.errorMessages) {
+					chrome.browserAction.setBadgeText({text: '!'});
+					chrome.browserAction.setBadgeBackgroundColor({color: '#ff0000'});
+				} else if (resp.total >= 1) {
+					chrome.browserAction.setBadgeText({text: (resp.total + '')});
+					chrome.browserAction.setBadgeBackgroundColor({color: '#5282d9'});
+				}
 			}
 		};
 		xhr.send();
 	}
 
-	setInterval(checkMyIssues, 60000);
+	setInterval(checkMyIssues, (1.5 * 60 * 1000));
 	checkMyIssues();
 }());

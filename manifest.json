@@ -16,7 +16,7 @@
 
   "background": {
     "scripts": ["eventPage.js"]
-//    "persistent": false
+    //"persistent": false
   },
 
   "content_scripts": [
@@ -32,6 +32,8 @@
 
   "permissions": [
     "tabs",
+    //"cookies",
+    //"https://*.atlassian.net/",
     "https://*.atlassian.net/rest/api/2/"
   ]
 }
