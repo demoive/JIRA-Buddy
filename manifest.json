@@ -7,7 +7,7 @@
   "default_locale": "en",
 
   "browser_action": {
-    "default_icon": "button.png",
+    "default_icon": "assets/img/button.png",
     "default_title": "__MSG_browserActionTitle__",
     "default_popup": "popup.html"
   },
@@ -15,20 +15,22 @@
   "options_page": "options.html",
 
   "background": {
-    "scripts": ["eventPage.js"]
+    "scripts": ["assets/js/eventPage.js"]
     //"persistent": false
   },
 
   "content_scripts": [
     {
       "matches": ["http://*.atlassian.net/*", "https://*.atlassian.net/*"],
-      "js": ["jira-customizations.js"]
+      "js": ["assets/js/jira-customizations.js"]
     }
   ],
 
   "web_accessible_resources": [
-    "audio/*"
+    "assets/audio/*"
   ],
+
+  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
 
   "permissions": [
     "tabs",

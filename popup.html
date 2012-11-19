@@ -6,21 +6,27 @@
 			body { width: 125px; }
 			#search-input { width: 85px; }
 			#banners { font-size: 9.5px; font-family: Arial; }
+			#server-info { font-size: 9.5px; font-family: Arial; color: rgba(180, 180, 180, 1); }
 		</style>
 	</head>
 	<body>
+		<div id="user-info">
+			
+		</div>
+
 		<div id="default-popup">
 			<form id="search-form">
 				<input type="search" id="search-input"><input type="submit" value="Go" id="search-submit">
-				<button id="red" class="set-banner">red</button>
 			</form>
 			<div id="banners">
-				Set Banners: <a href="#">red</a> | <a href="#">green</a>
 			</div>
 		</div>
 
-		<script src="jquery-1.8.2.min.js"></script>
-		<!--<script src="jquery-ui-1.8.21.min.js"></script>-->
-		<script src="app.js"></script>
+		<div id="server-info">
+
+		</div>
+		<script src="assets/lib/jquery-1.8.2.min.js"></script>
+		<!--<script src="assets/lib/jquery-ui-1.8.21.min.js"></script>-->
+		<script src="assets/js/popup.js"></script>
 	</body>
 </html>
