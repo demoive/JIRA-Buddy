@@ -1,10 +1,10 @@
-﻿"use strict";
+﻿/*jslint browser: true, plusplus: true, regexp: true, maxerr: 50, indent: 4 */
+/*global chrome */
 
-var JIRA_ACCOUNT_ID = localStorage['JIRA_ACCOUNT_ID'],
-	JIRA_PROJECT_PREFIX = localStorage['JIRA_PROJECT_PREFIX'],
+'use strict';
+
+var JIRA_ACCOUNT_ID = localStorage['JIRA_ACCOUNT_ID'];
 	//JIRA_XSRF_TOKEN = 'atlassian.xsrf.token',
-	JIRA_URL_BANNER_SET = 'https://' + JIRA_ACCOUNT_ID + '.atlassian.net/secure/admin/EditAnnouncementBanner.jspa';
-	//JIRA_URL_BANNER_VIEW = 'https://' + JIRA_ACCOUNT_ID + '.atlassian.net/secure/admin/EditAnnouncementBanner!default.jspa';
 
 
 $(window).on('load', function () {
@@ -18,7 +18,7 @@ $(window).on('load', function () {
  *
  * Initializes the pop-up and defines the functions
  */
-$(function() {
+$(function () {
 	var //$searchForm = $('#search-form'),
 		$searchInput = $('#search-input'),
 		$searchSubmit = $('#search-submit'),
@@ -26,7 +26,7 @@ $(function() {
 		banners = JSON.parse(localStorage['banners']),
 		requestedIssue;
 
-	if (!JIRA_ACCOUNT_ID || !JIRA_PROJECT_PREFIX) {
+	if (!JIRA_ACCOUNT_ID) {
 		$('#default-popup').html('<a href="options.html" target="_blank">Settings</a>');
 
 		return;
@@ -38,36 +38,9 @@ $(function() {
 	$searchInput.select();
 	$searchSubmit.value = chrome.i18n.getMessage("submitButtonLabel");
 
+	$searchSubmit.on('click', submitted);
+
 	$serverInfo.text('JIRA OnDemand (v' + localStorage['JIRA_SERVER_VERSION'] + ' b' + localStorage['JIRA_SERVER_BUILD'] + ')');
-
-
-	/**
-	 * Called by Chrome's tab query function.
-	 *
-	 * @param {Array} Array of Tabs that match the query
-	 */
-	function showOrOpenIssue(tabs) {
-		var i,
-			reg = new RegExp("^https?://" + JIRA_ACCOUNT_ID + ".atlassian.net/browse/" + requestedIssue + "$");
-
-		// bring focus to the first tab that matches the regular expression for an issue
-		if ((tabs && tabs.length) > 0) {
-			for (i = 0; i < tabs.length; ++i) {
-				if (tabs[i].url.match(reg) !== null) {
-					chrome.tabs.update(tabs[i].id, {
-						selected: true
-					});
-
-					return;
-				}
-			}
-		}
-
-		// issue is not open in any tab, so open a new tab for it
-		chrome.tabs.create({
-			url: "https://" + JIRA_ACCOUNT_ID + ".atlassian.net/browse/" + requestedIssue
-		});
-	}
 
 	// http://developer.chrome.com/extensions/manifest.html#permissions
 	/*
@@ -90,8 +63,14 @@ $(function() {
 
 		$.each(banners, function (indx, el) {
 			$bannerButton = $('<button class="set-banner">' + el.name + '</button>');
+
 			$bannerButton.on('click', function () {
-				//copyToClipboard('skeebs');
+				$bannerButton.attr('disabled', 'disabled');
+
+				chrome.extension.sendMessage({setBanner: el.content}, function (response) {
+					$bannerButton.removeAttr('disabled');
+					console.log(response);
+				});
 
 				/*
 				chrome.tabs.create({
@@ -104,34 +83,6 @@ $(function() {
 					});
 				});
 				*/
-
-				/*
-				chrome.cookies.get({
-					url: 'https://' + JIRA_ACCOUNT_ID + '.atlassian.net/',
-					name: JIRA_XSRF_TOKEN
-				}, function (cookie) {
-					console.log(cookie);
-				});
-				//*/
-
-				$.ajax({
-					url: JIRA_URL_BANNER_SET,
-					type: 'POST',
-					// this header avoids needing the atl_token from being sent to authenticate. awesome :) 
-					// https://developer.atlassian.com/display/JIRADEV/Form+Token+Handling#FormTokenHandling-Scripting
-					headers: {
-						"X-Atlassian-Token": 'no-check'
-					},
-					data: {
-						"announcement": el.content
-						//"bannerVisibility": 'private',
-						//"Set Banner": 'Set Banner'
-						//"atl_token": cookie.value
-					},
-					success: function () {
-						// w00t!
-					}
-				});
 
 				return false;
 			});
@@ -148,23 +99,17 @@ $(function() {
 	 * prepends it to the issue number before checking currently open tabs.
 	 */
 	function submitted() {
-		var hasPrefixRegExp = /.+-\d+/;
-
-		requestedIssue = $searchInput.attr('value');
+		var hasPrefixRegExp = /.+-\d+/,
+			requestedIssue = $searchInput.attr('value');
 
 		//issue = isNaN(issue) ? issue : (JIRA_PROJECT_PREFIX + "-" + issue);
 		requestedIssue = hasPrefixRegExp.test(requestedIssue) ? requestedIssue : (JIRA_PROJECT_PREFIX + "-" + requestedIssue);
-
-		chrome.tabs.query({
-			url: "https://" + JIRA_ACCOUNT_ID + ".atlassian.net/*"
-		}, showOrOpenIssue);
+		chrome.extension.sendMessage({showIssue: requestedIssue}, function (response) { });
 
 		localStorage['lastRequest'] = requestedIssue;
 
 		return false;
 	}
-
-	$searchSubmit.on('click', submitted);
 });
 
 
@@ -216,15 +161,3 @@ Logos/Icons:
 - JIRA Notifier: https://chrome.google.com/webstore/detail/jira-notifier/gmpioihmcpcbfboffahfekpcmooddonb/
 - JIRA assistant for Google Chrome: https://chrome.google.com/webstore/detail/jira-assistant-for-google/afpofdeegmmclngjmadpjaajacebkege/
 */
-
-
-
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'UA-36256238-3']);
-_gaq.push(['_trackPageview']);
-
-(function() {
-	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-	ga.src = 'https://ssl.google-analytics.com/ga.js';
-	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-})();
