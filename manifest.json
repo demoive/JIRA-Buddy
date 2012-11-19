@@ -16,7 +16,7 @@
 
   "background": {
     //"page": "background.html"
-    "scripts": ["assets/js/eventPage.js"]
+    "scripts": ["assets/js/background.js"]
     //"persistent": false
   },
 
