@@ -3,7 +3,8 @@
 
 'use strict';
 
-var JIRA_ACCOUNT_ID = localStorage['JIRA_ACCOUNT_ID'];
+var JIRA_ACCOUNT_ID = localStorage['JIRA_ACCOUNT_ID'],
+	JIRA_PROJECT_PREFIX = localStorage['projectKey'];
 	//JIRA_XSRF_TOKEN = 'atlassian.xsrf.token',
 
 
@@ -23,8 +24,7 @@ $(function () {
 		$searchInput = $('#search-input'),
 		$searchSubmit = $('#search-submit'),
 		$serverInfo = $('#server-info'),
-		banners = JSON.parse(localStorage['banners']),
-		requestedIssue;
+		banners = JSON.parse(localStorage['banners']);
 
 	if (!JIRA_ACCOUNT_ID) {
 		$('#default-popup').html('<a href="options.html" target="_blank">Settings</a>');
@@ -36,8 +36,7 @@ $(function () {
 
 	$searchInput.focus();
 	$searchInput.select();
-	$searchSubmit.value = chrome.i18n.getMessage("submitButtonLabel");
-
+	$searchSubmit.text(chrome.i18n.getMessage("submitButtonLabel"));
 	$searchSubmit.on('click', submitted);
 
 	$serverInfo.text('JIRA OnDemand (v' + localStorage['JIRA_SERVER_VERSION'] + ' b' + localStorage['JIRA_SERVER_BUILD'] + ')');

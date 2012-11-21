@@ -37,13 +37,15 @@ var jiraBuddyCRX = {
 
 		chrome.extension.onMessage.addListener(self.crxMessage);
 
-		setInterval(self.checkMyIssues, (1.5 * 60 * 1000));
+		// this should be turned into a Chrome Extension Alarm in order to be event driven
+		// consider adding a notification for when there are different (new) items in the results
+		setInterval(function () { self.checkMyIssues(); }, (1.5 * 60 * 1000));
 		self.checkMyIssues();
 	},
 
 
 	/**
-	 * Receives all the messages sent winthin this extension
+	 * Receives all the messages sent within this extension
 	 *
 	 * @param {Object} The sent message
 	 * @param {Object} The MessageSender object
@@ -156,8 +158,32 @@ var jiraBuddyCRX = {
 		xhr.onreadystatechange = function () {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
-					//var resp = JSON.parse(xhr.responseText);
-					self.prop('JIRA_ACCOUNT_PROJECTS', xhr.responseText);
+					var projInfo = {},
+						resp = JSON.parse(xhr.responseText);
+
+					if (resp.errorMessages) {
+						console.error("Unable to get Project information");
+
+						self.prop('JIRA_ACCOUNT_PROJECTS', null);
+					} else {
+						for (var i = 0; i < resp.length; ++i) {
+							projInfo[resp[i].key] = {
+								id: resp[i].id,
+								name: resp[i].name,
+								//description: resp[i].,
+								avatar: resp[i].avatarUrls["48x48"]
+								//lead:resp[i].
+							};
+						}
+
+						self.prop('JIRA_ACCOUNT_PROJECTS', JSON.stringify(projInfo));
+
+						// if there isn't already a "selected" project,
+						// set it to the last one returned from the API call
+						if (!self.prop('projectKey') && resp.length >= 0) {
+							self.prop('projectKey', resp[(resp.length - 1)].key);
+						}
+					}
 				}
 			}
 		};
