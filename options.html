@@ -42,6 +42,11 @@
 			<h3>Banners</h3>
 			<p><a href="#" id="add-banner">Add banner</a></p>
 
+			<h3>Injected Script</h3>
+			<form class="inject-script">
+				<input type="text" id="inject-script-url" name="inject-script-url" placeholder="Javascript URL (not used)"><br>
+				<textarea id="inject-script-code" name="inject-script-code"></textarea>
+			</form>
 			<!--
 			<label for="">Blue:</label>
 			<textarea id="banner-blue">
@@ -97,10 +102,11 @@ Cut off for current sprint is at <strong>17:00</strong> (GMT+1)
 <script type="text/javascript" src="http://sbs.waytostay.com/ITC/wts-jira-customizations.js"></script>
 -->
 
-			<input type="submit" value="Save" id="options-save">
+			<!--<input type="submit" value="Save" id="options-save">-->
 		</form>
 
 		<script src="assets/lib/jquery-1.8.2.min.js"></script>
+        <script src="assets/lib/jshint.js"></script>
         <script src="assets/js/options.js"></script>
 	</body>
 </html>

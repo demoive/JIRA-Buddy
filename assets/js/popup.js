@@ -24,6 +24,7 @@ $(function () {
 		$searchInput = $('#search-input'),
 		$searchSubmit = $('#search-submit'),
 		$serverInfo = $('#server-info'),
+		$userInfo = $('#user-info'),
 		banners = JSON.parse(localStorage['banners']);
 
 	if (!JIRA_ACCOUNT_ID) {
@@ -40,6 +41,12 @@ $(function () {
 	$searchSubmit.on('click', submitted);
 
 	$serverInfo.text('JIRA OnDemand (v' + localStorage['JIRA_SERVER_VERSION'] + ' b' + localStorage['JIRA_SERVER_BUILD'] + ')');
+
+	$userInfo.append(
+		$('<img src="' + localStorage['JIRA_USER_AVATAR'] + '"> ' + localStorage['JIRA_USER_NAME'])
+	).append(
+		$('<strong title="' + localStorage['JIRA_USER_EMAIL'] + '"> ' + localStorage['JIRA_USER_NAME'] + '</strong><br><span>' + localStorage['JIRA_USER_LOGIN_COUNT'] + '/' + (localStorage['JIRA_USER_LOGIN_COUNT']*1 + localStorage['JIRA_USER_LOGIN_FAILED_COUNT']*1) + ' </span>')
+	);
 
 	// http://developer.chrome.com/extensions/manifest.html#permissions
 	/*
@@ -133,24 +140,18 @@ Popup:
 - in the future, make it an autocomplete like the one that went away in the 5.0 upgrade
 - in footer, show number of working hours per day, days per week (https://waytostay.atlassian.net/secure/admin/TimeTrackingAdmin!default.jspa)
 
-
 Background:
 - get the alarms working and convert to an Event Page!
 - ! if can't reach server
 - define/save JQL to search for on interval (definable interval?)
-
-- AWESOMENESS:
-	var descriptionTemplate = "BLAH";
-	// or just try using jQuery as the function name ((typeof jQuery != "undefined"))
-	bfjQueryoverride("body").on('focus', '#description', function () { bfjQueryoverride(this).val(descriptionTemplate) });
-	bfjQueryoverride("body").on('blur', '#description', function () { bfjQueryoverride(this).val('') });
-	- but no jquery on this page: https://waytostay.atlassian.net/secure/CreateIssue.jspa (and script loading still works)
 
 Ideas:
 - If 1 issue assigned to me, prefil it in the quick-goto
 - Code Monkey and customizable injection script as an option
 - Default sounds? Enable/disable them?
 - Provide sample JQLs: https://confluence.atlassian.com/display/JIRACOM/Example+SQL+queries+for+JIRA
+
+- Add option of when to inject the content script
 
 Logos/Icons:
 - http://www.atlassian.com/company/press/resources/?tab=logos

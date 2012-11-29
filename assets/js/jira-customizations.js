@@ -13,8 +13,17 @@
  * https://confluence.atlassian.com/display/JIRA/Fields+Allowing+Custom+HTML+or+JavaScript
  */
 
+
+//var descriptionTemplate = "BLAH";
+// or just try using jQuery as the function name ((typeof jQuery != "undefined"))
+//bfjQueryoverride("body").on('focus', '#description', function () { bfjQueryoverride(this).val(descriptionTemplate) });
+//bfjQueryoverride("body").on('blur', '#description', function () { bfjQueryoverride(this).val('') });
+//- but no jquery on this page: https://waytostay.atlassian.net/secure/CreateIssue.jspa (and script loading still works)
+
+
 (function () {
-	var AUDIO_PATH = chrome.extension.getURL("audio/"),
+	var DESCRIPTION_TEMPLATE = "*How to reproduce*\n\n\n*Current behavior*\n\n\n*Expected behavior*\n",
+		AUDIO_PATH = chrome.extension.getURL("assets/audio/"),
 		closeButton = document.getElementById('action_id_701') || document.getElementById('action_id_2'),
 		resolveButton = document.getElementById('action_id_5'),
 		reopenButton = document.getElementById('action_id_3'),
@@ -34,10 +43,32 @@
 			ogg: AUDIO_PATH + 'Sound-Effect_Loser.ogg'
 		};
 
-	/**/
+	//window.addEventListener('load', function () {
+		console.log("window loaded!");
+		setTimeout(function () {
+			console.log(jQuery);
+			// sets the default value of the Description field.
+			if (typeof jQuery !== "undefined") {
+				console.log("cool, jQuery!");
+				jQuery("body").
+					on('focus', '#description', function () {
+						if (jQuery(this).val().trim() === '') {
+							jQuery(this).val(DESCRIPTION_TEMPLATE);
+						}
+					}).
+					on('blur', '#description', function () {
+						if (jQuery(this).val().trim() === DESCRIPTION_TEMPLATE) {
+							jQuery(this).val('');
+						}
+					});
+			}
+		}, 5000);
+	//}, false);
+
+	/*
 	// sets the default value of the Description field.
 	if (document.getElementById("description") && document.getElementById("description").value === "") {
-		document.getElementById("description").value = "*How to reproduce*\n\n\n*Current behavior*\n\n\n*Expected behavior*\n";
+		document.getElementById("description").value = DESCRIPTION_TEMPLATE;
 	}
 	/**/
 
@@ -90,7 +121,7 @@
 	}
 
 	/**/
-	// attaches a listener to the "Close" button
+	// attaches a listener to the "Resolve" button
 	if (resolveButton) {
 		resolveButton.addEventListener('click', function () {
 			playSound(audioSrcBugle);
@@ -108,7 +139,7 @@
 	/**/
 
 	/**/
-	// attaches a listener to the "Close" button
+	// attaches a listener to the "Reopen" button
 	if (reopenButton) {
 		reopenButton.addEventListener('click', function () {
 			playSound(audioSrcLoser);

@@ -23,7 +23,8 @@
 		var $optionsForm = $('#options-form'),
 			$jiraAccountId = $('#jira-account-id'),
 			$jiraProjectPrefix = $('#jira-project-prefix'),
-			$optionsSave = $('#options-save'),
+			INJECT_SCRIPT_CODE_PLACEHOLDER = '(function () {\n  "use strict";\n\n  // Start customizing!\n}());',
+			//$optionsSave = $('#options-save'),
 
 
 			banners = JSON.parse(window.localStorage.getItem('banners'));
@@ -58,16 +59,6 @@
 		});
 		//*/
 
-		/**
-		 * Called when the options form is submitted.
-		 */
-		function saveOptions() {
-			localStorage['JIRA_ACCOUNT_ID'] = $jiraAccountId.attr('value');
-			localStorage['JIRA_PROJECT_PREFIX'] = $jiraProjectPrefix.attr('value');
-
-			return false;
-		}
-
 		//$jiraAccountId.attr('value', ((localStorage['JIRA_ACCOUNT_ID']) || ''));
 		$jiraAccountId.text((window.localStorage.getItem('JIRA_ACCOUNT_ID') || 'default'));
 		$jiraAccountId.on('blur', function () {
@@ -77,9 +68,6 @@
 		});
 		
 		$jiraProjectPrefix.attr('value', ((localStorage['JIRA_PROJECT_PREFIX']) || ''));
-
-
-
 
 
 
@@ -101,7 +89,8 @@
 			$('.banner').each(function () {
 				banners.push({
 					name: $(this).find('input[name="name"]').val(),
-					content: $(this).find('textarea[name="content"]').val()
+					source: $(this).find('textarea[name="content"]').val()
+					//markup: https://waytostay.atlassian.net/rest/api/1.0/render
 				});
 			});
 
@@ -119,7 +108,35 @@
 			});
 		}
 
-		$optionsSave.value = chrome.i18n.getMessage("optionsSaveButtonLabel");
+		$('#inject-script-url').on('blur', function () {
+			var url = $(this).val();
+
+			if (url.trim() !== '') {
+				window.localStorage.setItem('injectScriptURL', url);
+			} else {
+				window.localStorage.removeItem('injectScriptURL');
+			}
+		}).val(window.localStorage.getItem('injectScriptURL') || '');
+
+		$('#inject-script-code').on('blur', function () {
+			var code = $(this).val(),
+				result = JSHINT(code);
+
+			console.log("JSHINT results...");
+			console.log(result);
+			console.log(JSHINT.errors);
+			console.log(JSHINT.data());
+
+			if (code.trim() !== '' && code !== INJECT_SCRIPT_CODE_PLACEHOLDER) {
+				window.localStorage.setItem('injectScriptCode', code);
+			} else {
+				window.localStorage.removeItem('injectScriptCode');
+			}
+
+		}).val(window.localStorage.getItem('injectScriptCode') || INJECT_SCRIPT_CODE_PLACEHOLDER);
+
+
+		//$optionsSave.value = chrome.i18n.getMessage("optionsSaveButtonLabel");
 		//$optionsForm.on('submit', saveOptions);
 	});
 }());

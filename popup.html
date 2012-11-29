@@ -4,10 +4,13 @@
 		<meta charset="utf-8" />
 		<title>JIRA Buddy</title>
 		<style>
-			body { width: 125px; }
+			body { width: 400px; font: 8pt Arial; }
 			#search-input { width: 85px; }
+			#user-info { float: left; }
+			#user-info img { float: left; width: 25px; border-radius: 3px; }
+			#search-form { float: right; }
 			#banners { font-size: 9.5px; font-family: Arial; }
-			#server-info { font-size: 9.5px; font-family: Arial; color: rgba(180, 180, 180, 1); }
+			#server-info { float: right; font: 7.5pt Arial; color: rgba(180, 180, 180, 1); }
 		</style>
 		<script src="assets/js/analytics.js"></script>
 	</head>
@@ -20,10 +23,12 @@
 			<form id="search-form">
 				<input type="search" id="search-input"><button type="submit" id="search-submit"></button>
 			</form>
-			<div id="banners">
-			</div>
 		</div>
 
+		<div style="clear:both"></div>
+
+			<div id="banners">
+			</div>
 		<div id="server-info">
 
 		</div>

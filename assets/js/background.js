@@ -36,11 +36,48 @@ var jiraBuddyCRX = {
 		// should be called when the atlassian id is updated in the options.html
 
 		chrome.extension.onMessage.addListener(self.crxMessage);
+		chrome.tabs.onUpdated.addListener(self.injectCode);
 
 		// this should be turned into a Chrome Extension Alarm in order to be event driven
 		// consider adding a notification for when there are different (new) items in the results
 		setInterval(function () { self.checkMyIssues(); }, (1.5 * 60 * 1000));
 		self.checkMyIssues();
+	},
+
+
+	/**
+	 * Injects the user-defined content script into tabs which accept them
+	 *
+	 * @param {integer} The id of the updated Tab
+	 * @param {Object} Lists the changes ot the state of the tab that was updated
+	 * @param {Object} A full Tab object of the tab that was updated
+	 */
+	injectCode: function (tabId, changeInfo, tab) {
+		var self = jiraBuddyCRX,
+			urlSrc = self.prop('injectScriptURL'),
+			codeSrc = self.prop('injectScriptCode'),
+			reg = new RegExp('^https?://' + self.prop('JIRA_ACCOUNT_ID') + '.atlassian.net');;
+
+		// we register the injection as soon as the document begins loading
+		// since we control when the script execution will occur within executeScript()
+		if (changeInfo.status === "loading" && tab.url.match(reg) !== null) {
+			/*
+			if (urlSrc !== null) {
+				chrome.tabs.executeScript(null, {
+					file: urlSrc,
+					runAt: "document_end"
+				});
+			}
+			//*/
+
+			if (codeSrc !== null) {
+				chrome.tabs.executeScript(null, {
+					code: codeSrc,
+					//runAt: "document_start"
+					runAt: "document_end"
+				});
+			}
+		}
 	},
 
 

@@ -20,12 +20,12 @@
     //"persistent": false
   },
 
-  "content_scripts": [
-    {
-      "matches": ["http://*.atlassian.net/*", "https://*.atlassian.net/*"],
-      "js": ["assets/js/jira-customizations.js"]
-    }
-  ],
+  //"content_scripts": [
+  //  {
+  //    "matches": ["http://*.atlassian.net/*", "https://*.atlassian.net/*"],
+  //    "js": ["assets/js/jira-customizations.js"]
+  //  }
+  //],
 
   "web_accessible_resources": [
     "assets/audio/*"
