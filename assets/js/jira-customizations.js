@@ -20,6 +20,10 @@
 //bfjQueryoverride("body").on('blur', '#description', function () { bfjQueryoverride(this).val('') });
 //- but no jquery on this page: https://waytostay.atlassian.net/secure/CreateIssue.jspa (and script loading still works)
 
+var jq = document.createElement('script');
+jq.src = chrome.extension.getURL('assets/lib/jquery-1.8.2.min.js');
+//document.getElementsByTagName('head')[0].appendChild(jq);
+
 
 (function () {
 	var DESCRIPTION_TEMPLATE = "*How to reproduce*\n\n\n*Current behavior*\n\n\n*Expected behavior*\n",
@@ -43,27 +47,22 @@
 			ogg: AUDIO_PATH + 'Sound-Effect_Loser.ogg'
 		};
 
-	//window.addEventListener('load', function () {
-		console.log("window loaded!");
-		setTimeout(function () {
-			console.log(jQuery);
-			// sets the default value of the Description field.
-			if (typeof jQuery !== "undefined") {
-				console.log("cool, jQuery!");
-				jQuery("body").
-					on('focus', '#description', function () {
-						if (jQuery(this).val().trim() === '') {
-							jQuery(this).val(DESCRIPTION_TEMPLATE);
-						}
-					}).
-					on('blur', '#description', function () {
-						if (jQuery(this).val().trim() === DESCRIPTION_TEMPLATE) {
-							jQuery(this).val('');
-						}
-					});
-			}
-		}, 5000);
-	//}, false);
+	window.addEventListener('load', function () {
+		// sets the default value of the Description field.
+		if (typeof jQuery !== "undefined") {
+			jQuery("body").
+				on('focus', '#description', function () {
+					if (jQuery(this).val().trim() === '') {
+						jQuery(this).val(DESCRIPTION_TEMPLATE);
+					}
+				}).
+				on('blur', '#description', function () {
+					if (jQuery(this).val().trim() === DESCRIPTION_TEMPLATE) {
+						jQuery(this).val('');
+					}
+				});
+		}
+	}, false);
 
 	/*
 	// sets the default value of the Description field.

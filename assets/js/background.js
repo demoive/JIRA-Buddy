@@ -60,21 +60,16 @@ var jiraBuddyCRX = {
 
 		// we register the injection as soon as the document begins loading
 		// since we control when the script execution will occur within executeScript()
-		if (changeInfo.status === "loading" && tab.url.match(reg) !== null) {
-			/*
-			if (urlSrc !== null) {
-				chrome.tabs.executeScript(null, {
-					file: urlSrc,
-					runAt: "document_end"
-				});
-			}
-			//*/
-
+		if (changeInfo.status === 'loading' && tab.url.match(reg) !== null) {
 			if (codeSrc !== null) {
-				chrome.tabs.executeScript(null, {
-					code: codeSrc,
-					//runAt: "document_start"
-					runAt: "document_end"
+				chrome.tabs.executeScript(tabId, {
+					file: 'assets/lib/jquery-1.8.2.min.js',
+					runAt: "document_start"
+				}, function () {
+					chrome.tabs.executeScript(tabId, {
+						code: codeSrc,
+						runAt: "document_end"
+					});
 				});
 			}
 		}
