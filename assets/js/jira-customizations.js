@@ -50,14 +50,14 @@ jq.src = chrome.extension.getURL('assets/lib/jquery-1.8.2.min.js');
 	window.addEventListener('load', function () {
 		// sets the default value of the Description field.
 		if (typeof jQuery !== "undefined") {
-			jQuery("body").
+			jQuery('body').
 				on('focus', '#description', function () {
 					if (jQuery(this).val().trim() === '') {
 						jQuery(this).val(DESCRIPTION_TEMPLATE);
 					}
 				}).
 				on('blur', '#description', function () {
-					if (jQuery(this).val().trim() === DESCRIPTION_TEMPLATE) {
+					if (jQuery(this).val().trim() === DESCRIPTION_TEMPLATE.trim()) {
 						jQuery(this).val('');
 					}
 				});
