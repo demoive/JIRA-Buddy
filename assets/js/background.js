@@ -86,6 +86,7 @@ var jiraBuddyCRX = {
 	crxMessage: function (msg, sender, responseCallback) {
 		var self = jiraBuddyCRX;
 
+console.log(msg);
 		// sets the Announcement Banner (https://ATLASIAN_ACCOUNT_ID.atlassian.net/secure/admin/EditAnnouncementBanner!default.jspa)
 		if (msg.setBanner !== undefined) {
 			var xhr = new XMLHttpRequest(),
@@ -105,6 +106,28 @@ var jiraBuddyCRX = {
 				}
 			};
 			xhr.send(xhrData);
+
+/* this would be how to do the call using the new ajax function
+			self.ajax({
+				url: 'https://' + self.prop('JIRA_ACCOUNT_ID') + '.atlassian.net/secure/admin/EditAnnouncementBanner.jspa',
+				type: 'POST',
+				data: {
+					"announcement": encodeURIComponent(msg.setBanner)
+					//"bannerVisibility": 'private',
+					//"Set Banner": 'Set Banner'
+					//"atl_token": cookie.value
+				},
+				// this header avoids needing the atl_token from being sent to authenticate. awesome :) 
+				// https://developer.atlassian.com/display/JIRADEV/Form+Token+Handling#FormTokenHandling-Scripting
+				headers: {
+					"X-Atlassian-Token": 'no-check'
+				},
+				success: function (xhr) {
+console.log("return from banner set!");
+					responseCallback("w00t!");
+				}
+			});
+			//*/
 
 			/*
 			$.ajax({
@@ -182,7 +205,42 @@ var jiraBuddyCRX = {
 	 * 
 	 */
 	getProjectInfo: function () {
-		var self = this,
+		var self = this;
+
+		self.ajax({
+			url: self.getRestUrl('api') + 'project',
+			type: 'GET',
+			success: function (xhr) {
+				var projInfo = {},
+					resp = JSON.parse(xhr.responseText);
+
+				if (resp.errorMessages) {
+					console.error("Unable to get Project information");
+
+					self.prop('JIRA_ACCOUNT_PROJECTS', null);
+				} else {
+					for (var i = 0; i < resp.length; ++i) {
+						projInfo[resp[i].key] = {
+							id: resp[i].id,
+							name: resp[i].name,
+							//description: resp[i].,
+							avatar: resp[i].avatarUrls["48x48"]
+							//lead:resp[i].
+						};
+					}
+
+					self.prop('JIRA_ACCOUNT_PROJECTS', JSON.stringify(projInfo));
+
+					// if there isn't already a "selected" project,
+					// set it to the last one returned from the API call
+					if (!self.prop('projectKey') && resp.length >= 0) {
+						self.prop('projectKey', resp[(resp.length - 1)].key);
+					}
+				}
+			}
+		});
+
+/* commented out for reference in case we decide to keep the manual ajax
 			xhr = new XMLHttpRequest(),
 			xhrUrl = self.getRestUrl('api') + 'project';
 
@@ -220,6 +278,7 @@ var jiraBuddyCRX = {
 			}
 		};
 		xhr.send();
+*/
 	},
 
 
@@ -377,6 +436,70 @@ var jiraBuddyCRX = {
 		}
 
 		return null;
+	},
+
+
+	/**
+	 * Mediocre, generic-purpose AJAX function.
+	 * Just suitable for use within this extension.
+	 */
+	ajax: function (settings) {
+		var req = new XMLHttpRequest(),
+			queryString = '',
+			queryKeys = typeof settings.data === 'object' && Object.keys(settings.data),
+			headerKeys = typeof settings.headers === 'object' && Object.keys(settings.headers);
+
+		req.onreadystatechange = function () {
+			switch (req.readyState) {
+				// 0: open() has not been called yet
+				case req.UNSENT:
+					break;
+
+				// 1: send() has not been called yet
+				case req.OPENED:
+					break;
+
+				// 2: send() has been called, and headers and status are available
+				case req.HEADERS_RECEIVED:
+					break;
+
+				// 3: downloading (responseText holds partial data)
+				case req.LOADING:
+					break;
+
+				// 4: operation complete
+				case req.DONE:
+					if (req.status === 200) {
+						settings.success && settings.success(req);
+					} else {
+						//settings.fail(req);
+					}
+					break;
+				default:
+					break;
+			}
+		};
+
+		req.open(settings.type, settings.url);
+		//req.setRequestHeader('User-Agent', 'XMLHTTP/1.0');
+
+		// required header if the request is of type POST
+		if (settings.data && settings.type && settings.type.toUpperCase() === 'POST') {
+			req.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+		}
+
+		// sets individual headers
+		headerKeys && headerKeys.forEach(function (key) {
+			req.setRequestHeader(key, settings.headers[key]);
+		});
+
+		// builds the query string from the data
+		queryKeys && queryKeys.forEach(function (key, indx) {
+			queryString += (indx > 0 ? '&' : '') + key + "=" + encodeURIComponent(settings.data[key]);
+		});
+
+		// test if the query string will be added to the URL properly if the URL already includes some
+		req.send(queryString);
 	}
 }
 

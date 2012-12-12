@@ -57,7 +57,7 @@ jq.src = chrome.extension.getURL('assets/lib/jquery-1.8.2.min.js');
 					}
 				}).
 				on('blur', '#description', function () {
-					if (jQuery(this).val().trim() === DESCRIPTION_TEMPLATE.trim()) {
+					if (jQuery(this).val().trim() === DESCRIPTION_TEMPLATE) {
 						jQuery(this).val('');
 					}
 				});
