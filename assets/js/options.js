@@ -22,12 +22,44 @@
 	$(function() {
 		var $optionsForm = $('#options-form'),
 			$jiraAccountId = $('#jira-account-id'),
-			$jiraProjectPrefix = $('#jira-project-prefix'),
 			INJECT_SCRIPT_CODE_PLACEHOLDER = '(function () {\n  "use strict";\n\n  // Start customizing!\n}());',
 			//$optionsSave = $('#options-save'),
 
+			banners = JSON.parse(window.localStorage.getItem('banners')),
+			filters = JSON.parse(window.localStorage.getItem('JIRA_USER_FILTERS'));
 
-			banners = JSON.parse(window.localStorage.getItem('banners'));
+
+/*
+			// the message should query https://waytostay.atlassian.net/rest/api/2/filter/favourite
+			var response = ;
+			//chrome.extension.sendMessage({getFavoriteFilters: ''}, function (response) {
+				var $filter,
+					templateCode = $('#fav-filter-template').html();
+
+				console.log(response);
+
+				$.each(response, function (indx, filter) {
+					console.log(filter.id);
+					console.log(filter.name);
+					//console.log(filter.description);
+					console.log(filter.jql);
+
+
+					$filter = $(templateCode.supplant(filter));
+
+
+					$('#fav-filters').append($filter);
+				});
+
+				$('#fav-filters').on('change', function () {
+					// update the local storage saved values (id and jql)
+					// re-trigger the badge and interval
+				});
+			//});
+//*/
+
+
+
 
 		/*
 		var myCodeMirror = CodeMirror.fromTextArea(document.getElementById('banner-red'), {
@@ -59,47 +91,35 @@
 		});
 		//*/
 
-		//$jiraAccountId.attr('value', ((localStorage['JIRA_ACCOUNT_ID']) || ''));
 		$jiraAccountId.text((window.localStorage.getItem('JIRA_ACCOUNT_ID') || 'default'));
 		$jiraAccountId.on('blur', function () {
+			// if value differs, save it and run any other function that changes based on this value (basically, something like the init() function)
 			window.localStorage.setItem('JIRA_ACCOUNT_ID', $(this).text());
 
 			// https://waytostay.atlassian.net/rest/api/2/project/
 		});
-		
-		$jiraProjectPrefix.attr('value', ((localStorage['JIRA_PROJECT_PREFIX']) || ''));
-
 
 
 		$('#add-banner').on('click', function () {
-			$(this).before($('#banner-form-template').html().supplant({name:"", content:""}));
+			$(this).before($('#banner-form-template').html().supplant({name:'', source:''}));
 
 			return false;
 		});
 
 		$(document).on('click', '.banner a', function () {
 			$(this).closest('form').remove();
-			// this should also save the banners
+			saveBanners();
+
 			return false;
 		});
 
 		$(document).on('blur', '.banner input, .banner textarea', function () {
-			var banners = [];
-
-			$('.banner').each(function () {
-				banners.push({
-					name: $(this).find('input[name="name"]').val(),
-					source: $(this).find('textarea[name="content"]').val()
-					//markup: https://waytostay.atlassian.net/rest/api/1.0/render
-				});
-			});
-
-			window.localStorage.setItem('banners', JSON.stringify(banners));
+			saveBanners();
 
 			return false;
 		});
 
-		// convert to using jQuery's templates
+		// convert to using jQuery's templates?
 		if (banners !== null) {
 			var templateCode = $('#banner-form-template').html();
 
@@ -108,15 +128,42 @@
 			});
 		}
 
-		$('#inject-script-url').on('blur', function () {
-			var url = $(this).val();
+		if (filters !== null) {
+			$.each(filters, function (indx, el) {
+				$('#fav-filters').append($('<option value="' + el.id + '">' + el.name + '</option>'));
+			});
+		}
 
-			if (url.trim() !== '') {
-				window.localStorage.setItem('injectScriptURL', url);
+
+
+		$('#fav-filters').on('change', function () {
+			var query,
+				filter = $(this).val();
+
+			if (filter !== '') {
+				query = filters[filter] && filters[filter].query;
+
+				window.localStorage.setItem('badgeQuery', query);
+				window.localStorage.setItem('badgeQueryId', filter);
 			} else {
-				window.localStorage.removeItem('injectScriptURL');
+				window.localStorage.removeItem('badgeQuery');
+				window.localStorage.removeItem('badgeQueryId');
 			}
-		}).val(window.localStorage.getItem('injectScriptURL') || '');
+		}).val(window.localStorage.getItem('badgeQueryId') || '');
+
+
+
+		$('#description-template-value').on('blur', function () {
+			var template = $(this).val();
+
+			if (template.trim() !== '') {
+				window.localStorage.setItem('descriptionTemplate', template);
+			} else {
+				window.localStorage.removeItem('descriptionTemplate');
+			}
+		}).val(window.localStorage.getItem('descriptionTemplate') || '');
+
+
 
 		$('#inject-script-code').on('blur', function () {
 			var code = $(this).val(),
@@ -139,4 +186,19 @@
 		//$optionsSave.value = chrome.i18n.getMessage("optionsSaveButtonLabel");
 		//$optionsForm.on('submit', saveOptions);
 	});
+
+
+	function saveBanners() {
+		var banners = [];
+
+		$('.banner').each(function () {
+			banners.push({
+				name: $(this).find('input[name="name"]').val(),
+				source: $(this).find('textarea[name="source"]').val()
+				//markup: https://waytostay.atlassian.net/rest/api/1.0/render
+			});
+		});
+
+		window.localStorage.setItem('banners', JSON.stringify(banners));
+	}
 }());

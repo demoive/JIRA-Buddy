@@ -20,8 +20,8 @@
 //bfjQueryoverride("body").on('blur', '#description', function () { bfjQueryoverride(this).val('') });
 //- but no jquery on this page: https://waytostay.atlassian.net/secure/CreateIssue.jspa (and script loading still works)
 
-var jq = document.createElement('script');
-jq.src = chrome.extension.getURL('assets/lib/jquery-1.8.2.min.js');
+//var jq = document.createElement('script');
+//jq.src = chrome.extension.getURL('assets/lib/jquery-1.8.2.min.js');
 //document.getElementsByTagName('head')[0].appendChild(jq);
 
 
@@ -47,6 +47,7 @@ jq.src = chrome.extension.getURL('assets/lib/jquery-1.8.2.min.js');
 			ogg: AUDIO_PATH + 'Sound-Effect_Loser.ogg'
 		};
 
+	/*
 	window.addEventListener('load', function () {
 		// sets the default value of the Description field.
 		if (typeof jQuery !== "undefined") {
@@ -57,12 +58,13 @@ jq.src = chrome.extension.getURL('assets/lib/jquery-1.8.2.min.js');
 					}
 				}).
 				on('blur', '#description', function () {
-					if (jQuery(this).val().trim() === DESCRIPTION_TEMPLATE) {
+					if (jQuery(this).val() === DESCRIPTION_TEMPLATE) {
 						jQuery(this).val('');
 					}
 				});
 		}
 	}, false);
+	//*/
 
 	/*
 	// sets the default value of the Description field.

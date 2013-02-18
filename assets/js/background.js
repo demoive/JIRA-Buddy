@@ -17,6 +17,9 @@ _gaq.push(['_trackPageview']);
 var jiraBuddyCRX = {
 	ATLASSIAN_REST_API_BASE_PATHNAME: '/rest/api/2/',	// /rest/api/latest/
 	ATLASSIAN_REST_AUTH_BASE_PATHNAME: '/rest/auth/1/session/',
+	config: {
+		BADGE_REFRESH_INTERVAL: (1.5 * 60 * 1000)
+	},
 
 
 	/**
@@ -31,6 +34,7 @@ var jiraBuddyCRX = {
 		this.restAuthenticate();
 
 		this.getProjectInfo();
+		this.getFavFilters();
 
 		// should probably have a function called "updateProps()" which essentially called all three functions above in sequence
 		// should be called when the atlassian id is updated in the options.html
@@ -40,8 +44,8 @@ var jiraBuddyCRX = {
 
 		// this should be turned into a Chrome Extension Alarm in order to be event driven
 		// consider adding a notification for when there are different (new) items in the results
-		setInterval(function () { self.checkMyIssues(); }, (1.5 * 60 * 1000));
-		self.checkMyIssues();
+		setInterval(function () { self.updateBadgeQuery(); }, self.config.BADGE_REFRESH_INTERVAL);
+		self.updateBadgeQuery();
 	},
 
 
@@ -54,22 +58,31 @@ var jiraBuddyCRX = {
 	 */
 	injectCode: function (tabId, changeInfo, tab) {
 		var self = jiraBuddyCRX,
-			urlSrc = self.prop('injectScriptURL'),
-			codeSrc = self.prop('injectScriptCode'),
-			reg = new RegExp('^https?://' + self.prop('JIRA_ACCOUNT_ID') + '.atlassian.net');;
+			codeSrc,
+			reg = new RegExp('^https?://' + self.prop('JIRA_ACCOUNT_ID') + '.atlassian.net');
 
-		// we register the injection as soon as the document begins loading
-		// since we control when the script execution will occur within executeScript()
-		if (changeInfo.status === 'loading' && tab.url.match(reg) !== null) {
-			if (codeSrc !== null) {
+		if (tab.url.match(reg) !== null) {
+			// we register the injection as soon as the document begins loading
+			// since we control when the script execution will occur within executeScript()
+			if (changeInfo.status === 'loading') {
+				codeSrc = self.prop('injectScriptCode');
+
+				// ensures jQuery is installed
 				chrome.tabs.executeScript(tabId, {
 					file: 'assets/lib/jquery-1.8.2.min.js',
-					runAt: "document_start"
+					runAt: 'document_start'
 				}, function () {
 					chrome.tabs.executeScript(tabId, {
-						code: codeSrc,
-						runAt: "document_end"
+						file: 'assets/js/descriptionTemplate.js',
+						runAt: 'document_end'
 					});
+
+					if (codeSrc !== null) {
+						chrome.tabs.executeScript(tabId, {
+							code: codeSrc,
+							runAt: 'document_end'
+						});
+					}
 				});
 			}
 		}
@@ -86,7 +99,6 @@ var jiraBuddyCRX = {
 	crxMessage: function (msg, sender, responseCallback) {
 		var self = jiraBuddyCRX;
 
-console.log(msg);
 		// sets the Announcement Banner (https://ATLASIAN_ACCOUNT_ID.atlassian.net/secure/admin/EditAnnouncementBanner!default.jspa)
 		if (msg.setBanner !== undefined) {
 			var xhr = new XMLHttpRequest(),
@@ -164,6 +176,8 @@ console.log("return from banner set!");
 			}, function (matchedTabs) {
 				self.showOrOpenIssue(matchedTabs, msg.showIssue);
 			});
+		} else if (msg.getProp !== undefined) {
+			responseCallback(self.prop(msg.getProp));
 		}
 
 		return true;
@@ -204,6 +218,46 @@ console.log("return from banner set!");
 	/**
 	 * 
 	 */
+	getFavFilters: function () {
+		var self = this;
+
+		self.ajax({
+			url: self.getRestUrl('api') + 'filter/favourite',
+			type: 'GET',
+			success: function (xhr) {
+				var filters = {},
+					resp = JSON.parse(xhr.responseText);
+
+				if (resp.errorMessages) {
+					console.error("Unable to get Favourite Filters");
+
+					self.prop('JIRA_USER_FILTERS', null);
+				} else {
+					for (var i = 0; i < resp.length; ++i) {
+						filters[resp[i].id] = {
+							id: resp[i].id,
+							name: resp[i].name,
+							description: resp[i].description,
+							query: resp[i].jql
+						};
+					}
+
+					self.prop('JIRA_USER_FILTERS', JSON.stringify(filters));
+
+					// if there isn't already a "selected" project,
+					// set it to the last one returned from the API call
+					//if (!self.prop('badgeQuery') && resp.length >= 0) {
+					//	self.prop('badgeQuery', resp[(resp.length - 1)].key);
+					//}
+				}
+			}
+		});
+	},
+
+
+	/**
+	 * 
+	 */
 	getProjectInfo: function () {
 		var self = this;
 
@@ -233,8 +287,8 @@ console.log("return from banner set!");
 
 					// if there isn't already a "selected" project,
 					// set it to the last one returned from the API call
-					if (!self.prop('projectKey') && resp.length >= 0) {
-						self.prop('projectKey', resp[(resp.length - 1)].key);
+					if (!self.prop('projectContext') && resp.length >= 0) {
+						self.prop('projectContext', resp[(resp.length - 1)].key);
 					}
 				}
 			}
@@ -270,8 +324,8 @@ console.log("return from banner set!");
 
 						// if there isn't already a "selected" project,
 						// set it to the last one returned from the API call
-						if (!self.prop('projectKey') && resp.length >= 0) {
-							self.prop('projectKey', resp[(resp.length - 1)].key);
+						if (!self.prop('projectContext') && resp.length >= 0) {
+							self.prop('projectContext', resp[(resp.length - 1)].key);
 						}
 					}
 				}
@@ -370,28 +424,36 @@ console.log("return from banner set!");
 	/**
 	 * 
 	 */
-	checkMyIssues: function () {
+	updateBadgeQuery: function () {
 		var self = this,
 			xhr = new XMLHttpRequest(),
-			xhrUrl = self.getRestUrl('api') + "search?jql=fixVersion+%3D+earliestUnreleasedVersion%28%22WTS%22%29+AND+%28assignee+%3D+currentUser%28%29+OR+assignee+is+EMPTY%29+AND+status+not+in+%28Closed%2C+Resolved%29+ORDER+BY+status%2C+priority%2C+assignee+DESC";
+			query = self.prop('badgeQuery');
+			xhrUrl = self.getRestUrl('api') + "search";
 
-		xhr.open('GET', xhrUrl, true);
-		xhr.onreadystatechange = function () {
-			if (xhr.readyState === 4) {
-				if (xhr.status === 200) {
-					var resp = JSON.parse(xhr.responseText);
+		if (query) {
+			xhrUrl += "?jql=" + encodeURIComponent(query);
 
-					if (resp.errorMessages) {
-						chrome.browserAction.setBadgeText({text: '!'});
-						chrome.browserAction.setBadgeBackgroundColor({color: '#ff0000'});
-					} else if (resp.total >= 1) {
-						chrome.browserAction.setBadgeText({text: (resp.total + '')});
-						chrome.browserAction.setBadgeBackgroundColor({color: '#5282d9'});
+			xhr.open('GET', xhrUrl, true);
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState === 4) {
+					if (xhr.status === 200) {
+						var resp = JSON.parse(xhr.responseText);
+
+						if (resp.errorMessages) {
+							chrome.browserAction.setBadgeText({text: '!'});
+							chrome.browserAction.setBadgeBackgroundColor({color: '#ff0000'});
+						} else if (resp.total >= 1) {
+							chrome.browserAction.setBadgeText({text: (resp.total + '')});
+							chrome.browserAction.setBadgeBackgroundColor({color: '#5282d9'});
+						}
 					}
 				}
-			}
-		};
-		xhr.send();
+			};
+			xhr.send();
+		} else {
+			chrome.browserAction.setBadgeText({text: ''});
+		}
+
 	},
 
 
@@ -499,6 +561,7 @@ console.log("return from banner set!");
 		});
 
 		// test if the query string will be added to the URL properly if the URL already includes some
+		// http://requestb.in/
 		req.send(queryString);
 	}
 }

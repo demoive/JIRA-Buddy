@@ -9,7 +9,7 @@
 		<script src="assets/lib/codemirror.min.js"></script>
 		<style>
 			/* http://html.adobe.com/edge/webfonts/ */
-			/*body { width: 125px; }*/
+			body { background-image: url(assets/img/options-bg.jpg); }
 			#search-input { width: 85px; }
 			/*text-shadow: rgba(0, 0, 0, .01) 0 0 1px*/
 			#jira-account-url { font: 32pt SourceCodeProRegular,"Courier New",monospace; color: #aaa; text-align: center; }
@@ -25,8 +25,11 @@
 		<script type="text/template" id="banner-form-template">
 			<form class="banner">
 				<input type="text" name="name" placeholder="Name" value="{name}"> <a href="#">delete</a><br>
-				<textarea name="content" placeholder="Content">{content}</textarea>
+				<textarea name="source" placeholder="Content">{source}</textarea>
 			</form>
+		</script>
+		<script type="text/template" id="fav-filter-template">
+			<option id="fav-filter-{id}" value="{id}">{name}</option>
 		</script>
 	</head>
 	<body>
@@ -34,17 +37,30 @@
 			<div id="jira-account-url">
 				<span class="jira-generic-url">https://</span><span id="jira-account-id" contenteditable spellcheck="false"></span><span class="jira-generic-url">.atlassian.net/</span>
 			</div>
-			<label for="jira-account-id">JIRA Account ID:</label> <input type="text" id="jira-account-id"><br />
-			<label for="jira-project-prefix">JIRA Project Prefix:</label> <input type="text" id="jira-project-prefix"><br />
 
-			<div id="skeeba">yo <b>man</b>!</div>
+			<h3>Badge Query (JQL)</h3>
+			<form class="badge-query">
+				<select id="fav-filters">
+					<option value="">Disabled</option>
+					<!--<option id="fav-filter-custom" value="fav-filter-custom">Custom</option>-->
+				</select>
+				<!--
+				<textarea id="badge-query-jql" name="badge-query-jql">
+fixVersion = earliestUnreleasedVersion("WTS") AND (assignee = currentUser() OR assignee is EMPTY) AND status not in (Closed, Resolved) ORDER BY status, priority, assignee DESC
+				</textarea>
+				-->
+			</form>
 
-			<h3>Banners</h3>
+			<h3>Announcement Banners</h3>
 			<p><a href="#" id="add-banner">Add banner</a></p>
+
+			<h3>Description Template</h3>
+			<form class="description-template">
+				<textarea id="description-template-value" name="description-template-value"></textarea>
+			</form>
 
 			<h3>Injected Script</h3>
 			<form class="inject-script">
-				<input type="text" id="inject-script-url" name="inject-script-url" placeholder="Javascript URL (not used)"><br>
 				<textarea id="inject-script-code" name="inject-script-code"></textarea>
 			</form>
 			<!--
@@ -77,6 +93,10 @@ Developers should begin/continue working on items in *[v1.2.1|https://waytostay.
 Cut off for current sprint is at *17:00* (GMT+1)
 {panel}
 			</textarea>
+
+
+ORANGE
+borderColor=#e6943c| bgColor=##ffe1b3
 			-->
 
 
