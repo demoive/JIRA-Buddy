@@ -35,7 +35,6 @@ $(function () {
 	}
 
 	$searchInput.attr('value', ((localStorage['lastRequest']) || ''));
-
 	$searchInput.focus();
 	$searchInput.select();
 	$searchSubmit.text(chrome.i18n.getMessage("submitButtonLabel"));
@@ -45,11 +44,9 @@ $(function () {
 	projects && projects.forEach(function (key) {
 		$projectContext.append($('<option value="' + key + '">' + key + '</option>'));
 	});
-
 	$projectContext.on('change', function () {
 		localStorage['projectContext'] = $(this).val();
 	});
-
 	$projectContext.find('option[value="' + localStorage['projectContext'] + '"]').attr('selected', '');
 
 	$serverInfo.text('JIRA OnDemand (v' + localStorage['JIRA_SERVER_VERSION'] + ' b' + localStorage['JIRA_SERVER_BUILD'] + ')');
@@ -62,25 +59,6 @@ $(function () {
 
 	// get list of versions (don't put into local storage)
 	// update prev, current, next
-	// get listing of badge query
-	// update the crx badge (& interval)
-
-
-	// http://developer.chrome.com/extensions/manifest.html#permissions
-	/*
-	function copyToClipboard(text){
-		var copyDiv = document.createElement('div');
-		copyDiv.contentEditable = true;
-		document.body.appendChild(copyDiv);
-		copyDiv.innerText = text;
-		//copyDiv.select();
-		copyDiv.unselectable = "off";
-		copyDiv.focus();
-		document.execCommand('selectAll');
-		document.execCommand('copy');
-		document.body.removeChild(copyDiv);
-	}
-	//*/
 
 	if (banners !== null) {
 		var $bannerButton;

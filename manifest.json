@@ -3,11 +3,17 @@
 
   "name": "JIRA Buddy",
   "description": "__MSG_extensionDescription__",
-  "version": "1.5",
+  "version": "1.7",
   "default_locale": "en",
 
+  "icons": {
+    "16": "assets/img/icon_favicon-infobar.png",
+    "48": "assets/img/icon_extension-prefs.png",
+    "128": "assets/img/icon_store-dialogs.png"
+  },
+
   "browser_action": {
-    "default_icon": "assets/img/button.png",
+    "default_icon": "assets/img/browser-button.png",
     "default_title": "__MSG_browserActionTitle__",
     "default_popup": "popup.html"
   },

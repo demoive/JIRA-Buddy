@@ -44,8 +44,8 @@ var jiraBuddyCRX = {
 
 		// this should be turned into a Chrome Extension Alarm in order to be event driven
 		// consider adding a notification for when there are different (new) items in the results
-		setInterval(function () { self.updateBadgeQuery(); }, self.config.BADGE_REFRESH_INTERVAL);
-		self.updateBadgeQuery();
+		setInterval(function () { self.badgeQuery(); }, self.config.BADGE_REFRESH_INTERVAL);
+		self.badgeQuery();
 	},
 
 
@@ -178,6 +178,8 @@ console.log("return from banner set!");
 			});
 		} else if (msg.getProp !== undefined) {
 			responseCallback(self.prop(msg.getProp));
+		} else if (msg.execBadgeQuery !== undefined) {
+			self.badgeQuery(responseCallback);
 		}
 
 		return true;
@@ -424,7 +426,7 @@ console.log("return from banner set!");
 	/**
 	 * 
 	 */
-	updateBadgeQuery: function () {
+	badgeQuery: function (callback) {
 		var self = this,
 			xhr = new XMLHttpRequest(),
 			query = self.prop('badgeQuery');
@@ -439,13 +441,8 @@ console.log("return from banner set!");
 					if (xhr.status === 200) {
 						var resp = JSON.parse(xhr.responseText);
 
-						if (resp.errorMessages) {
-							chrome.browserAction.setBadgeText({text: '!'});
-							chrome.browserAction.setBadgeBackgroundColor({color: '#ff0000'});
-						} else if (resp.total >= 1) {
-							chrome.browserAction.setBadgeText({text: (resp.total + '')});
-							chrome.browserAction.setBadgeBackgroundColor({color: '#5282d9'});
-						}
+						callback && callback(resp);
+						self.updateBadge(resp);
 					}
 				}
 			};
@@ -453,7 +450,28 @@ console.log("return from banner set!");
 		} else {
 			chrome.browserAction.setBadgeText({text: ''});
 		}
+	},
 
+
+	/**
+	 * 
+	 */
+	updateBadge: function (resp) {
+		var self = this,
+			queryName = self.prop('badgeQueryName') || '';
+
+		// also set the title of extension button to the query name
+		chrome.browserAction.setTitle({title: queryName});
+
+		if (resp.errorMessages) {
+			chrome.browserAction.setBadgeText({text: '!'});
+			chrome.browserAction.setBadgeBackgroundColor({color: '#ff0000'});
+		} else if (resp.total >= 1) {
+			chrome.browserAction.setBadgeText({text: (resp.total + '')});
+			chrome.browserAction.setBadgeBackgroundColor({color: '#5282d9'});
+		} else {
+			chrome.browserAction.setBadgeText({text: ''});
+		}
 	},
 
 

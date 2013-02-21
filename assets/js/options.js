@@ -27,6 +27,8 @@
 
 			banners = JSON.parse(window.localStorage.getItem('banners')),
 			filters = JSON.parse(window.localStorage.getItem('JIRA_USER_FILTERS'));
+			// force the badgeQuery to be run again to get the latest stuff
+			// update the saved id, name, etc. for the selected one
 
 
 /*
@@ -137,15 +139,18 @@
 
 
 		$('#fav-filters').on('change', function () {
-			var query,
+			var name, query,
 				filter = $(this).val();
 
 			if (filter !== '') {
+				name = filters[filter] && filters[filter].name;
 				query = filters[filter] && filters[filter].query;
 
+				window.localStorage.setItem('badgeQueryName', name);
 				window.localStorage.setItem('badgeQuery', query);
 				window.localStorage.setItem('badgeQueryId', filter);
 			} else {
+				window.localStorage.removeItem('badgeQueryName');
 				window.localStorage.removeItem('badgeQuery');
 				window.localStorage.removeItem('badgeQueryId');
 			}
