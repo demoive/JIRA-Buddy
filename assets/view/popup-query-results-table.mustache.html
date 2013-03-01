@@ -1,0 +1,52 @@
+<table id="query-results">
+  <thead>
+    <tr>
+      <th></th>
+      <!--<th></th>-->
+      <th>Key</th>
+      <th></th>
+      <th>Summary</th>
+      <th>Ownership</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#issues}}
+    <tr class="issue">
+      <!--
+      <td>
+        <img src="{{fields.issuetype.iconUrl}}" title="{{fields.issuetype.name}}">
+      </td>
+      -->
+      <td>
+        <img src="{{fields.status.iconUrl}}" title="{{fields.status.name}}">
+      </td>
+      <td class="key">
+        <a href="{{self}}">{{key}}</a>
+      </td>
+      <td>
+        <img src="{{fields.priority.iconUrl}}" title="{{fields.priority.name}}">
+      </td>
+      <td>
+        {{#fields.parent}}
+        <a href="{{fields.parent.self}}" title="{{fields.parent.fields.summary}}">{{fields.parent.key}}</a> /
+        {{/fields.parent}}
+        {{fields.summary}}
+      </td>
+      <td class="ownership">
+        <div class="transition">
+          <img src="{{fields.reporter.avatarUrls.48x48}}" title="Reporter: {{fields.reporter.displayName}} ({{fields.reporter.name}})" class="reporter">
+          {{! https://waytostay.atlassian.net/secure/useravatar?avatarId=10123 }}
+          {{#fields.assignee}}
+          <img src="{{fields.assignee.avatarUrls.48x48}}" title="Assignee: {{fields.assignee.displayName}} ({{fields.assignee.name}})" class="assignee">
+          {{/fields.assignee}}
+        </div>
+      </td>
+    </tr>
+    {{/issues}}
+    {{^issues}}
+    <tr class="issues none">
+      <td colspan="5">No issues</td>
+    </tr>
+    {{/issues}}
+  </tbody>
+</table>

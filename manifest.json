@@ -37,6 +37,14 @@
     "assets/audio/*"
   ],
 
+  // http://developer.chrome.com/apps/sandboxingEval.html
+  //"sandbox": {
+  //   "pages": ["assets/view/popup-query-results-table.handlebars.html"]
+  //   //? "scripts": ["assets/view/popup-query-results-table.handlebars.js"]
+  //},
+
+  // 'unsafe-eval' directive needed for Handlebars or Hogan (not Mustache or precompiled Handlebars)
+  // also consider sandboxing the google analytics code!
   "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
 
   "permissions": [

@@ -1,17 +1,9 @@
 ﻿<!doctype html>
 <html>
 	<head>
-		<meta charset="utf-8" />
+		<meta charset="utf-8">
 		<title>JIRA Buddy</title>
-		<style>
-			body { width: 400px; font: 8pt Arial; }
-			#search-input { width: 85px; }
-			#user-info { float: left; }
-			#user-info img { float: left; width: 25px; border-radius: 3px; }
-			#search-form { float: right; }
-			#banners { font-size: 9.5px; font-family: Arial; }
-			#server-info { float: right; font: 7.5pt Arial; color: rgba(180, 180, 180, 1); }
-		</style>
+		<link rel="stylesheet" href="assets/css/popup.css">
 		<script src="assets/js/analytics.js"></script>
 	</head>
 	<body>
@@ -28,15 +20,23 @@
 			</form>
 		</div>
 
-		<div style="clear:both"></div>
-
-			<div id="banners">
+		<div id="filter-query">
+			<div id="filter-query-selector">
+				<select id="fav-filters">
+					<!--<option id="fav-filter-custom" value="fav-filter-custom">Custom</option>-->
+				</select>
 			</div>
+			<div id="filter-query-results"></div>
+		</div>
+
+		<div style="clear:both"></div>
+			<div id="banners"></div>
 		<div id="server-info">
 
 		</div>
-		<script src="assets/lib/jquery-1.8.2.min.js"></script>
-		<!--<script src="assets/lib/jquery-ui-1.8.21.min.js"></script>-->
+		<script src="assets/lib/jquery.min.js"></script>
+		<script src="assets/lib/handlebars.runtime.min.js"></script>
+		<script src="assets/view/popup.handlebars.js"></script>
 		<script src="assets/js/popup.js"></script>
 	</body>
 </html>

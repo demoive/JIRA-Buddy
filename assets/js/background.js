@@ -69,7 +69,7 @@ var jiraBuddyCRX = {
 
 				// ensures jQuery is installed
 				chrome.tabs.executeScript(tabId, {
-					file: 'assets/lib/jquery-1.8.2.min.js',
+					file: 'assets/lib/jquery.min.js',
 					runAt: 'document_start'
 				}, function () {
 					chrome.tabs.executeScript(tabId, {
@@ -178,6 +178,8 @@ console.log("return from banner set!");
 			});
 		} else if (msg.getProp !== undefined) {
 			responseCallback(self.prop(msg.getProp));
+		} else if (msg.execQuery !== undefined) {
+			self.execQuery(msg.execQuery, responseCallback);
 		} else if (msg.execBadgeQuery !== undefined) {
 			self.badgeQuery(responseCallback);
 		}
@@ -227,7 +229,9 @@ console.log("return from banner set!");
 			url: self.getRestUrl('api') + 'filter/favourite',
 			type: 'GET',
 			success: function (xhr) {
-				var filters = {},
+				var filters = {
+						//ids: []
+					},
 					resp = JSON.parse(xhr.responseText);
 
 				if (resp.errorMessages) {
@@ -236,6 +240,7 @@ console.log("return from banner set!");
 					self.prop('JIRA_USER_FILTERS', null);
 				} else {
 					for (var i = 0; i < resp.length; ++i) {
+						//filters.ids.push(resp[i].id);
 						filters[resp[i].id] = {
 							id: resp[i].id,
 							name: resp[i].name,
@@ -426,10 +431,36 @@ console.log("return from banner set!");
 	/**
 	 * 
 	 */
+	execQuery: function (query, callback) {
+		var self = this,
+			xhr = new XMLHttpRequest(),
+			xhrUrl = self.getRestUrl('api') + "search";
+
+		if (query) {
+			xhrUrl += "?jql=" + encodeURIComponent(query);
+
+			xhr.open('GET', xhrUrl, true);
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState === 4) {
+					if (xhr.status === 200) {
+						var resp = JSON.parse(xhr.responseText);
+
+						callback && callback(resp);
+					}
+				}
+			};
+			xhr.send();
+		}
+	},
+
+
+	/**
+	 * 
+	 */
 	badgeQuery: function (callback) {
 		var self = this,
 			xhr = new XMLHttpRequest(),
-			query = self.prop('badgeQuery');
+			query = self.prop('badgeQuery'),
 			xhrUrl = self.getRestUrl('api') + "search";
 
 		if (query) {

@@ -1,0 +1,12 @@
+/* http://html.adobe.com/edge/webfonts/ */
+body { background-image: url(/assets/img/options-bg.jpg); }
+#search-input { width: 85px; }
+/*text-shadow: rgba(0, 0, 0, .01) 0 0 1px*/
+#jira-account-url { font: 32pt SourceCodeProRegular,"Courier New",monospace; color: #aaa; text-align: center; }
+#jira-account-url span[contenteditable] { color: black; outline: 0; }
+/*#jira-account-id { margin: 0; padding: 0; font: 32pt Helvetica; border: 0; outline: 0; }*/
+
+/*
+span.CodeMirror-matchhighlight { background: #e9e9e9 }
+.CodeMirror-focused span.CodeMirror-matchhighlight { background: #e7e4ff; !important }
+*/

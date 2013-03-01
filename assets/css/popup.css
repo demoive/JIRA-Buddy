@@ -1,0 +1,31 @@
+body { width: 600px; font: 9pt/10pt Arial; }
+
+a { color: #326ca6; }
+a:active { color: #326ca6; }
+
+/* Query Results */
+.badge-filter { background-color: #eee; }
+
+table { width: 100%; border-collapse: collapse; border: 1px solid black; }
+thead { background-color: #369; }
+th { padding: 4px 2px; text-align: left; font-weight: bold; color: #ffffff; }
+td { padding: 3px 2px; border-top: 1px solid #ccc; }
+
+.issue-key { white-space: nowrap; }
+
+.transition { position: relative; top: -2px; padding-left: 22px; }
+.transition img { position: absolute; height: 20px; border-radius: 9999px; -webkit-transition: all .1s linear; }
+.transition img:hover { z-index: 1; height: 48px; }
+.transition img.reporter { left: 0; }
+.transition img.reporter:hover { top: -14px; left: -14px; }
+.transition img.assignee { left: 42px; }
+.transition img.assignee:hover { top: -14px; left: 28px; }
+.transition:after { content: "→"; font-weight: bold; font-size: 13pt; line-height: 12pt; font-family: Verdana; }
+
+
+#search-input { width: 85px; }
+#user-info { float: left; font-size: 8pt; }
+#user-info img { float: left; width: 25px; border-radius: 3px; }
+#search-form { float: right; }
+#banners { font-size: 9.5px; font-family: Arial; }
+#server-info { float: right; font: 7.5pt Arial; color: rgba(180, 180, 180, 1); }
