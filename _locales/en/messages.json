@@ -1,6 +1,6 @@
 {
   "extensionDescription": {
-    "message": "Quickly go to a JIRA issue by either bringing focus to an already open tab or opening a new one.",
+    "message": "A helper for your most common or day-to-day OnDemand JIRA tasks.",
     "description": "This is the plain-text description that shows up summarizing what the extension does. It can't be longer than 132 characters."
   },
   "browserActionTitle": {

@@ -50,7 +50,7 @@ $(function () {
 	});
 	$projectContext.find('option[value="' + localStorage['projectContext'] + '"]').attr('selected', '');
 
-	$serverInfo.text('JIRA OnDemand (v' + localStorage['JIRA_SERVER_VERSION'] + ' b' + localStorage['JIRA_SERVER_BUILD'] + ')');
+	$serverInfo.text('JIRA OnDemand v' + localStorage['JIRA_SERVER_VERSION'] + ' (b' + localStorage['JIRA_SERVER_BUILD'] + ')');
 
 	$userInfo.append(
 		$('<img src="' + localStorage['JIRA_USER_AVATAR'] + '"> ' + localStorage['JIRA_USER_NAME'])
