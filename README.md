@@ -5,6 +5,8 @@ A convenience helper for your most common or day-to-day OnDemand JIRA tasks.
 [Submit bugs and issues](https://github.com/demoive/JIRA-Buddy/issues) on GitHub<br>
 [View the project board](https://trello.com/board/jira-buddy/512dfc830265343a150027ad) on Trello
 
+![Screenshot of the Chrome Extension Popup](https://demoive.github.io/JIRA-Buddy/chrome-store-screenshot.png)
+
 ## Features
 - Quick "go-to" search box: will either open a new or the existing tab for the JIRA issue submitted
 - All of your favorite filters from JIRA are automatically available by default
